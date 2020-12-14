@@ -136,19 +136,21 @@ class PostURLTests(TestCase):
         """Страница по адресу /new/ перенаправит анонимного
         пользователя на страницу логина.
         """
-        response = self.guest_client.get(reverse('posts:new_post'), follow=True)
+        url_new_post = reverse('posts:new_post')
+        response = self.guest_client.get(url_new_post, follow=True)
         self.assertRedirects(
-            response, '/auth/login/?next=/new/')
+            response, reverse('login') + '?next=' + url_new_post)
 
     def test_post_edit_redirect_anonymous_to_login(self):
         """Страница по адресу /testusername/1/edit/ перенаправит анонимного
         пользователя на страницу логина.
         """
-        response = self.guest_client.get(
-            reverse('posts:post_edit', kwargs={'username': 'testusername',
-                                               'post_id': PostURLTests.post_id}),
-            follow=True)
-        self.assertRedirects(response, reverse('posts:index'))
+        url_post_edit = reverse('posts:post_edit',
+                                kwargs={'username': PostURLTests.user,
+                                        'post_id': PostURLTests.post_id})
+        response = self.guest_client.get(url_post_edit, follow=True)
+        self.assertRedirects(response,
+                             reverse('login') + '?next=' + url_post_edit)
 
     def test_new_exists_at_desired_location(self):
         """Страница /new/ доступна авторизованному пользователю."""
@@ -192,4 +194,3 @@ class PostURLTests(TestCase):
             with self.subTest():
                 response = self.authorized_client.get(reverse_name)
                 self.assertEqual(response.status_code, int(reverse_name[1:-1]))
-

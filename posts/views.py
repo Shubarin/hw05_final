@@ -51,7 +51,7 @@ def new_post(request):
 
 
 def profile(request, username):
-    user = get_object_or_404(User.objects, username=username)
+    user = get_object_or_404(User, username=username)
     posts = user.posts.all()
     user_post_count = user.posts.all().count()
     paginator = Paginator(posts, RECORDS_ON_THE_PAGE)
@@ -83,10 +83,10 @@ def post_view(request, username, post_id):
 
     return render(request, "post.html", context)
 
-
+@login_required
 def post_edit(request, username, post_id):
     current_user = request.user
-    post = get_object_or_404(Post.objects, id=post_id,
+    post = get_object_or_404(Post, id=post_id,
                              author__username=username)
     post_author_user = post.author
     if current_user != post_author_user:
@@ -152,7 +152,7 @@ def follow_index(request):
 @login_required
 def profile_follow(request, username):
     user = request.user
-    author = get_object_or_404(User.objects, username=username)
+    author = get_object_or_404(User, username=username)
     if user != author:
         Follow.objects.get_or_create(
             user=user,
