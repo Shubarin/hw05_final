@@ -13,10 +13,6 @@ class StaticURLTests(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.templates_url_names = [
-            reverse('about-author'),
-            reverse('about-spec'),
-        ]
         cls.site = Site(
             pk=1,
             domain='127.0.0.1:8000',
@@ -41,8 +37,7 @@ class StaticURLTests(TestCase):
         ]
         cls.guest_client = Client()
         # Создаем авторизованный клиент
-        User = get_user_model()
-        user = User.objects.create_user(username='Testuser')
+        user = get_user_model().objects.create_user(username='Testuser')
         cls.authorized_client = Client()
         cls.authorized_client.force_login(user)
 
